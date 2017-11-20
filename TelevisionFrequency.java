@@ -2,12 +2,13 @@ import java.util.Arrays;
 
 public class TelevisionFrequency {
 	
-	private static int min_distance = 5;
+	private static int min_distance = 4;
 	static int stations[][];
 	static int adjacency_matrix[][];
 	static int colors[];
-	static int num_colors = 4;
-	static int num_vertices = 5;
+	static int colors_used[];
+	static int num_colors = 3;
+	static int num_vertices = 8;
 	private final int vertices;
 
 	
@@ -47,6 +48,7 @@ public class TelevisionFrequency {
 	            colors[k] = getVertexColor(k); 
 	            if(colors[k] == 0)return;
 	            if(k==num_vertices){
+	            System.out.println("Stations: [0, 1, 2, 3, 4, 5, 6, 7]");
 	            System.out.println("Color Assignment: "+Arrays.toString(colors));
 	            }
 	            else color(k+1);
@@ -74,14 +76,17 @@ public class TelevisionFrequency {
 	public static void main(String[] args) {
 		
 		colors = new int[num_vertices+1];
-		TelevisionFrequency graph = new TelevisionFrequency(5);
+		TelevisionFrequency graph = new TelevisionFrequency(num_vertices);
 		int[][] stations = {
-				{0,0,0,0,0,0},
-				{0,0,3,10,4,6},
-				{0,3,0,4,5,3},
-				{0,10,4,0,4,5},
-				{0,4,5,4,0,2},
-				{0,6,3,5,2,0}
+				
+				{0,2,5,8,7,6,5,9},
+				{2,0,9,7,8,4,3,2},
+				{5,9,0,5,6,8,9,5},
+				{8,7,5,0,4,2,3,9},
+				{7,8,6,4,0,8,7,5},
+				{6,4,8,2,8,0,2,5},
+				{5,3,9,3,7,2,0,4},
+				{9,2,5,9,5,5,4,0}
 		};
 		
 		System.out.println("The distances between stations matrix: ");
@@ -93,8 +98,8 @@ public class TelevisionFrequency {
 		}
 		
 		
-		for (int i = 1; i < stations.length; ++i) {
-	        for(int j = 1; j < stations[i].length; ++j) {
+		for (int i = 0; i < stations.length; ++i) {
+	        for(int j = 0; j < stations[i].length; ++j) {
 	        	if(stations[i][j] < min_distance && stations[i][j]!=0){
 	        		graph.addEdge(i, j, 1);
 	        		System.out.println("Edges: " + i + " to " + j);
@@ -102,19 +107,18 @@ public class TelevisionFrequency {
 	        }
 	     }
 		
+		
 		System.out.println("The adjacency matrix is: ");
-        System.out.print("  ");
-        for (int i = 1; i <= 5; i++)
-            System.out.print(i + " ");
-        System.out.println();
-
-        for (int i = 1; i <= 5; i++) 
-        {
-            System.out.print(i + " ");
-            for (int j = 1; j <= 5; j++) 
-                System.out.print(graph.getEdge(i, j) + " ");
-            System.out.println();
-        }
+		for (int i = 0; i < stations.length; ++i) {
+	        for(int j = 0; j < stations[i].length; ++j) {
+	        	
+	        	System.out.print(graph.getEdge(i, j) + " ");
+	        }
+	        	System.out.println();
+	        	
+	        
+	     }
+		
 
 		color(1);
 		 
