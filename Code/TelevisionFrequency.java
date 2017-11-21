@@ -1,22 +1,30 @@
-import java.awt.Color;
+/*
+ * ICSI 521 Discrete Mathematics and Applications
+ * Programming Assignment Group 4
+ * 1 Assginment Description:
+ * Given the distances between pairs of television stations and the minimum allowable 
+ * distance between stations, assign frequencies to these stations.
+ * 2 Solution:
+ * Based on our understanding, this is an undirected graph coloring question with a 
+ * minimum distance additional condition.
+ * This means that:
+ * 1)For two stations that have the distance shorter than minimum allowable distance 
+    definitely have different frequencies. Moreover, we can set an edge between these two stations.
+ * 2)For two stations that have longer distance than minimum distance, we don¡¯t add edge between these stations.
+ * 3)After 1) and 2) we can get a graph then it becomes a graph coloring questions for the frequencies assignment.
+ * The test example is the same to the one in the submitted document. 
+ * 
+ * 
+ * */
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class TelevisionFrequency {
-	
 	private int min_distance;
-	static int stations[][];
-	static int adjacency_matrix[][];
-	static int colors[];
-	static int colors_used[];
-	static int num_colors = 3;
-	//static int num_vertices = 8;
 	private int vertices;
-	//Modified by Yunwei
 	private ArrayList<Vertex> vertexes; //List of vertexes 
-
+	private int total_color;//counter for total color/frequencies in the graph
 	//Add inner class Vertex
 	public class Vertex
 	{
@@ -52,20 +60,12 @@ public class TelevisionFrequency {
 		private void printiAdjList()
 		{
 			Iterator<Vertex> it = adj.iterator();
-			System.out.print("Vertex " + this.vertex_id + "'s adjacencies are { ");
+			System.out.print("Station " + this.vertex_id + "'s adjacencies are { ");
 			while(it.hasNext())
 			{
 				System.out.print(it.next().vertex_id + " ");
 			}
 			System.out.println("}");
-			
-		}
-		//Checking color conflict
-		//If there is a conflict then changing color of vertex until no conflicts		
-		private void checkingColorConflicts()
-		{
-			
-			
 			
 		}
 	}//end of inner class Vertex
@@ -79,14 +79,8 @@ public class TelevisionFrequency {
 			Vertex v = new Vertex(i);
 			vertexes.add(v);
 		}
-		System.out.println("The size of vertexes list is "+vertexes.size());
-		Iterator<Vertex> it = vertexes.iterator();
-		
-		while(it.hasNext())
-		{
-			Vertex temp = it.next();
-			System.out.println("Vertex " + temp.vertex_id + " created!" + " The color is " + temp.color);
-		}
+		System.out.println("\n1: Create station vertex in graph: ");
+		System.out.println(vertexNum + " stations are created and frequency for each is 0 now.");
 		//After create vertexes then add the adjacencies to each one using the adjacency matrix
 		for(int vertex = 0; vertex<vertexNum; vertex++)
 		{
@@ -104,6 +98,16 @@ public class TelevisionFrequency {
 		}
 		
 	}	
+	//Print the frequency assignment result for each station
+	private void printFrequencies()
+	{
+		System.out.print("Frequency result: ");
+		for(int i = 0; i<vertexes.size(); i++)
+		{
+			System.out.print("{Station " + vertexes.get(i).vertex_id + ", " + vertexes.get(i).color + "} ");
+		}
+		System.out.println();
+	}
 	//Update the whole graph when one Vertex v has been colored
 	//Because it maybe in other vertex's adj list
 	private void graphColorUpdate(Vertex vertexChanged)
@@ -128,14 +132,7 @@ public class TelevisionFrequency {
 	//Checking and solving color conflict
 	//If there is a conflict then changing color of vertex until no conflicts		
 	private void solvingColorConflicts()
-	{		
-		Iterator<Vertex> v = vertexes.iterator();
-		while(v.hasNext())
-		{
-			
-			v.next();
-		}
-		
+	{				
 		for(int i = 0;i < vertexes.size();i++)
 		{
 			int adj_size = vertexes.get(i).adj.size();
@@ -157,20 +154,26 @@ public class TelevisionFrequency {
 			}//end of while
 			//After finishing color one vertex need to update the whole graph
 			this.graphColorUpdate(vertexes.get(i));
+			//Print the frequency for each station
+			System.out.println("Step " + (i+1) + ": Assign frequency for station " + i);
+			this.printFrequencies();
 		}
 		//print the color of each vertex
-		System.out.println("\n" + "Coloring finishs!");
-		for(int i = 0;i < vertexes.size();i++)
-		{
-			System.out.println("The color of Vertex " + vertexes.get(i).vertex_id + " is " + vertexes.get(i).color);
-		}
+		System.out.println("\n" + "4: Finish frequency assignment!");
+		this.printFrequencies();
+	}
+	//Counting the total color/frequency numbers
+	private void colorCounting()
+	{
+		
 	}
 	
-	//End of Yunwei Modification
+	//Constructor
 	public TelevisionFrequency(int v,int min) 
     {
         this.vertices = v;
         this.min_distance = min;
+        this.total_color = 0;
     }
    
 	public static void main(String[] args) {
@@ -199,16 +202,16 @@ public class TelevisionFrequency {
 		        System.out.print(stations1[i][j] + " ");
 		    }
 		    System.out.println();
-		}
-		
-		//test by Yunwei
+		}		
 		graph.vertexInit(graph.vertices,stations1);
 		Iterator<Vertex> it = graph.vertexes.iterator();
 		//print the adjacencies of each vertex
+		System.out.println("\n2: The adjacencies list for each station is ");
 		while(it.hasNext())
 		{
 			it.next().printiAdjList();
 		}
+		System.out.println("\n3: Begin frequency assignment ");
 		graph.solvingColorConflicts();
 	}
 }
