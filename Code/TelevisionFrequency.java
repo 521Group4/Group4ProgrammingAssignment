@@ -31,7 +31,10 @@ public class TelevisionFrequency {
 		private LinkedList<Vertex> adj; //Adjacency List of this vertex
 		private int vertex_id;
 		private int color;
-		//use the color counter to check if this vertex is colored correctly, only when color_counter == adj.size()
+		//use the color counter to check if this vertex is colored correctly, only when adj_counter == adj.size()
+		private int adj_counter; 
+		//Counting how many colors have been used during the coloring process
+		//The largest one will be the total number of frequencies that used in graph
 		private int color_counter; 
 		
 		public Vertex(int id)
@@ -41,8 +44,10 @@ public class TelevisionFrequency {
 			this.color = 0;
 			//Init adj list for this vertex
 			adj = new LinkedList<Vertex>();
-			// set color counter to 0
-			this.color_counter = 0;
+			// set color counter to 1, because need to use one color for initialization
+			this.color_counter = 1;
+			// set adj_counter to 0
+			this.adj_counter = 0;
 		}
 		private void setColor(int color)
 		{
@@ -51,6 +56,8 @@ public class TelevisionFrequency {
 		private void increaseColor()
 		{
 			this.color += 1;
+			//Record the color changing times for the vertex
+			this.color_counter += 1;
 		}
 		private int getColor()
 		{
@@ -137,7 +144,7 @@ public class TelevisionFrequency {
 		{
 			int adj_size = vertexes.get(i).adj.size();
 			//while loop for coloring one vertex in graph
-			while(vertexes.get(i).color_counter != vertexes.get(i).adj.size())
+			while(vertexes.get(i).adj_counter != vertexes.get(i).adj.size())
 			{
 				// if this vertex is not correctly colored then just increase the color
 				// Then check conflicts until the color_counter equals to adj size
@@ -150,7 +157,7 @@ public class TelevisionFrequency {
 						
 					}
 				}
-				vertexes.get(i).color_counter += 1;//add the color counter
+				vertexes.get(i).adj_counter += 1;//add the color counter
 			}//end of while
 			//After finishing color one vertex need to update the whole graph
 			this.graphColorUpdate(vertexes.get(i));
@@ -164,8 +171,16 @@ public class TelevisionFrequency {
 	}
 	//Counting the total color/frequency numbers
 	private void colorCounting()
-	{
-		
+	{	
+		int colorNumber = vertexes.get(0).color_counter;
+		for(int i = 1;i<vertexes.size(); i++)
+		{
+			if(vertexes.get(i).color_counter > colorNumber)
+			{
+				colorNumber = vertexes.get(i).color_counter;
+			}			
+		}
+		this.total_color = colorNumber;
 	}
 	
 	//Constructor
@@ -213,5 +228,7 @@ public class TelevisionFrequency {
 		}
 		System.out.println("\n3: Begin frequency assignment ");
 		graph.solvingColorConflicts();
+		graph.colorCounting();
+		System.out.println("The number of assigned frequencies is " + graph.total_color);
 	}
 }
